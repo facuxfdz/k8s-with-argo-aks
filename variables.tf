@@ -20,7 +20,7 @@ variable "dns_prefix" {
 
 variable "agent_count" {
   type = number
-  default = 3
+  default = 1
 }
 
 variable "ssh_public_key" {
