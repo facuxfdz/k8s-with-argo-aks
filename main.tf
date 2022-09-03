@@ -81,6 +81,7 @@ provider "kubectl" {
 }
 
 data "kubectl_file_documents" "namespace" {
+
   content = file("./manifests/argocd/namespace.yaml")
 }
 
@@ -93,8 +94,12 @@ data "kubectl_file_documents" "my-example-app" {
 }
 
 resource "kubectl_manifest" "namespace" {
+  depends_on = [
+    local_file.kubeconfig
+  ]
   count = length(data.kubectl_file_documents.namespace.documents)
   yaml_body = element(data.kubectl_file_documents.namespace.documents,count.index)
+  override_namespace = "argocd"
 }
 
 resource "kubectl_manifest" "argocd" {
@@ -107,6 +112,9 @@ resource "kubectl_manifest" "argocd" {
 }
 
 resource "kubectl_manifest" "my-example-app" {
+  depends_on = [
+    kubectl_manifest.argocd
+  ]
   count = length(data.kubectl_file_documents.my-example-app.documents)
   yaml_body = element(data.kubectl_file_documents.my-example-app.documents,count.index)
 }
