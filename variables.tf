@@ -23,12 +23,6 @@ variable "agent_count" {
   default = 1
 }
 
-variable "ssh_public_key" {
-  type = string
-  default = "~/.ssh/id_rsa.pub"
-}
-
-
 # Set these variables in .tfvars
 variable "aks_service_principal_app_id" {
   type = string
