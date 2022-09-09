@@ -52,6 +52,10 @@ data "kubectl_file_documents" "my-example-app" {
   content = file("./manifests/argocd/application.yaml")
 }
 
+data "kubectl_file_documents" "cert-manager" {
+  content = file("./manifests/argocd/cert_manager_application.yaml")
+}
+
 resource "kubectl_manifest" "namespace" {
   depends_on = [
     var.cluster_id
@@ -76,4 +80,12 @@ resource "kubectl_manifest" "my-example-app" {
   ]
   count = length(data.kubectl_file_documents.my-example-app.documents)
   yaml_body = element(data.kubectl_file_documents.my-example-app.documents,count.index)
+}
+
+resource "kubectl_manifest" "cert-manager" {
+  depends_on = [
+    kubectl_manifest.my-example-app
+  ]
+  count = length(data.kubectl_file_documents.cert-manager.documents)
+  yaml_body = element(data.kubectl_file_documents.cert-manager.documents,count.index)
 }
